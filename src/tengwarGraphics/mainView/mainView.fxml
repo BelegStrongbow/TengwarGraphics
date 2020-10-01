@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<GridPane alignment="center" style="-fx-background-color: f4f4f4;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.mainPackage.Controller">
+<GridPane alignment="center" style="-fx-background-color: f4f4f4;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tengwarGraphics.mainView.MainController">
    <columnConstraints>
       <ColumnConstraints />
       <ColumnConstraints />
@@ -24,7 +24,7 @@
       <RowConstraints />
    </rowConstraints>
    <children>
-      <VBox prefHeight="1080.0" prefWidth="1440.0" style="-fx-background-color: f4f4f4;">
+      <VBox prefHeight="1045.0" prefWidth="1440.0" style="-fx-background-color: f4f4f4;">
          <children>
             <HBox prefHeight="70.0" prefWidth="200.0" style="-fx-background-color: f4f4f4;">
                <VBox.margin>
@@ -79,7 +79,7 @@
             </HBox>
             <AnchorPane prefHeight="690.0" prefWidth="1440.0" style="-fx-background-color: ffffff;">
                <VBox.margin>
-                  <Insets top="80.0" />
+                  <Insets top="45.0" />
                </VBox.margin>
                <children>
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#526f3f" height="10.0" stroke="#526f3f" strokeType="INSIDE" strokeWidth="0.0" width="1440.0" />
@@ -95,8 +95,8 @@
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="480.0">
                <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#233b25" height="70.0" layoutX="172.0" layoutY="10.0" stroke="#233b25" strokeType="INSIDE" strokeWidth="0.0" width="300.0" />
-                  <Button layoutX="180.0" mnemonicParsing="false" prefHeight="70.0" prefWidth="300.0" style="-fx-background-color: #526f3f;" text="Browse images">
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#233b25" height="70.0" layoutX="172.0" layoutY="10.0" onMouseClicked="#goSavedImages" stroke="#233b25" strokeType="INSIDE" strokeWidth="0.0" width="300.0" />
+                  <Button layoutX="180.0" mnemonicParsing="false" onAction="#goSavedImages" prefHeight="70.0" prefWidth="300.0" style="-fx-background-color: #526f3f;" text="Browse images">
                      <font>
                         <Font size="28.0" />
                      </font>
@@ -108,7 +108,7 @@
                   <Font size="28.0" />
                </font>
                <VBox.margin>
-                  <Insets left="90.0" top="340.0" />
+                  <Insets left="90.0" top="190.0" />
                </VBox.margin>
             </Button>
             <Button mnemonicParsing="false" prefHeight="70.0" prefWidth="300.0" style="-fx-background-color: #526f3f;" text="Export as an image">
@@ -116,12 +116,12 @@
                   <Font size="28.0" />
                </font>
                <VBox.margin>
-                  <Insets left="90.0" top="150.0" />
+                  <Insets left="90.0" top="125.0" />
                </VBox.margin>
             </Button>
             <HBox prefHeight="100.0" prefWidth="480.0">
                <VBox.margin>
-                  <Insets top="150.0" />
+                  <Insets top="290.0" />
                </VBox.margin>
                <children>
                   <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="100.0" style="-fx-background-color: #233b25;" text="UNDO" textFill="WHITE">
