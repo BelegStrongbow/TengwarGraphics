@@ -21,7 +21,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource("mainView/mainView.fxml"));
         GridPane mainLayout = loader.load();
-        Scene scene = new Scene(mainLayout, 1920, 1080);
+        Scene scene = new Scene(mainLayout, 1920, 1045);
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();
@@ -31,16 +31,14 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource("mainView/mainView.fxml"));
         GridPane mainLayout = loader.load();
-        Scene scene = new Scene(mainLayout, 1920, 1080);
-        stage.setScene(scene);
+        stage.getScene().setRoot(mainLayout);
     }
 
     public static void loadSavedImages() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource("savedImages/savedImages.fxml"));
         VBox savedImagesLayout = loader.load();
-        Scene scene = new Scene(savedImagesLayout, 1920, 1080);
-        stage.setScene(scene);
+        stage.getScene().setRoot(savedImagesLayout);
     }
 
 
