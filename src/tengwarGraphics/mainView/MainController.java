@@ -8,7 +8,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import sun.font.Script;
 import tengwarGraphics.Main;
 
 import java.io.File;
@@ -36,7 +35,6 @@ public class MainController {
 
         GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
         graphicsContext.setFont(tengwarText.getFont());
-        System.out.println(graphicsContext.getFont().toString());
         graphicsContext.setTextAlign(TextAlignment.CENTER);
         graphicsContext.setTextBaseline(VPos.CENTER);
 

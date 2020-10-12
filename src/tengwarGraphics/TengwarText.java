@@ -1,14 +1,14 @@
 package tengwarGraphics;
 
-import javafx.fxml.FXML;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import java.util.Arrays;
-
 public class TengwarText extends Text {
+    private String vowels = "aeiouy";
+    private String doubleLengthTengwas = "2wsx4rfv5tgb";
+    private String singleLengthTengwas = "1qaz6yhnAZdcj";
+    private String singleLengthLong = "!Q3e";
     private String textOriginal;
     private int size;
     private Color color;
@@ -85,11 +85,13 @@ public class TengwarText extends Text {
     }
 
     private String transcribeParmaite(String textToTranscribe){
-        boolean oneWord = false;
+
+
         String result="";
         textToTranscribe.toLowerCase();
         String[] wordsToTranscribe = textToTranscribe.split(" ");
         for (int i = 0; i < wordsToTranscribe.length; i++) {
+            boolean oneWord = false;
             switch (wordsToTranscribe[i]){
                 case "the": result+="@ "; oneWord=true; break;
                 case "of": result+="W "; oneWord=true; break;
@@ -97,27 +99,85 @@ public class TengwarText extends Text {
             }
             if (oneWord==true) continue;
             for (int j = 0; j < wordsToTranscribe[i].length(); j++) {
+                boolean noFollowingConsonant=false;
+                String temp = "" + wordsToTranscribe[i].charAt(j);
+                if (vowels.contains(temp)) {
+                    if (j == wordsToTranscribe[i].length() - 1) noFollowingConsonant = true;
+                    else {
+                        String temp2 = "" + wordsToTranscribe[i].charAt(j + 1);
+                        if (temp2=="8") noFollowingConsonant = true;
+                        else if (vowels.contains(temp2)) noFollowingConsonant = true;
+                        else {
+                            wordsToTranscribe[i]=wordsToTranscribe[i].substring(0, j) + temp2 + temp + wordsToTranscribe[i].substring(j+2);
+                        }
+                    }
+                }
+                if (noFollowingConsonant==true) result+="`";
+                if (result.length()>0) temp = "" + result.charAt(result.length()-1);
                 switch (wordsToTranscribe[i].charAt(j)){
-                    case 'a': result+="E"; break;
+                    case 'a':
+                        if (doubleLengthTengwas.contains(temp)) result+="#";
+                        else if (singleLengthTengwas.contains(temp)) result+="E";
+                        else if (singleLengthLong.contains(temp)) result+="D";
+                        else if (temp.equals("`")) result+="C";
+                        else result+="Ñ";
+                        break;
                     case 'b': result+="w"; break;
                     case 'c': result+="i"; break;
                     case 'd': result+="2"; break;
+                    case 'e':
+                        if (doubleLengthTengwas.contains(temp)) result+="$";
+                        else if (singleLengthTengwas.contains(temp)) result+="R";
+                        else if (singleLengthLong.contains(temp)) result+="F";
+                        else if (temp.equals("`")) result+="V";
+                        else result+="Š";
+                        break;
                     case 'f': result+="e"; break;
                     case 'g': result+="x"; break;
                     case 'h': result+="9"; break;
+                    case 'i':
+                        if (doubleLengthTengwas.contains(temp)) result+="%";
+                        else if (singleLengthTengwas.contains(temp)) result+="T";
+                        else if (singleLengthLong.contains(temp)) result+="G";
+                        else if (temp.equals("`")) result+="B";
+                        else result+="É";
+                        break;
                     case 'j': result+="s"; break;
                     case 'k': result+="z"; break;
                     case 'l': result+="j"; break;
                     case 'm': result+="t"; break;
                     case 'n': result+="5"; break;
+                    case 'o':
+                        if (doubleLengthTengwas.contains(temp)) result+="ˆ";
+                        else if (singleLengthTengwas.contains(temp)) result+="Y";
+                        else if (singleLengthLong.contains(temp)) result+="H";
+                        else if (temp.equals("`")) result+="N";
+                        else result+="’";
+                        break;
                     case 'p': result+="q"; break;
                     case 'q': result+="q"; break;
                     case 'r': result+="6"; break;
                     case 's': result+="8"; break;
                     case 't': result+="1"; break;
+                    case 'u':
+                        if (doubleLengthTengwas.contains(temp)) result+="ˆ";
+                        else if (singleLengthTengwas.contains(temp)) result+="Y";
+                        else if (singleLengthLong.contains(temp)) result+="H";
+                        else if (temp.equals("`")) result+="N";
+                        else result+="’";
+                        break;
                     case 'v': result+="r"; break;
                     case 'w': result+="y"; break;
+                    case 'x': result+="d"; break;
                     case 'z': result+="k"; break;
+                    case ',': result+="="; break;
+                    case ';': result+="-"; break;
+                    case '-': result+="-"; break;
+                    case '.': result+="-"; break;
+                    case '!': result+="Á"; break;
+                    case '?': result+="À"; break;
+                    case ')': result+=">"; break;
+                    case '(': result+=">"; break;
                 }
             }
             result+=" ";
