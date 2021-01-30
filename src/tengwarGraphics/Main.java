@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -16,7 +17,6 @@ public class Main extends Application {
 
 
     static Stage stage;
-    public static TengwarText tengwarText = new TengwarText(710, 335);
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -36,6 +36,8 @@ public class Main extends Application {
         loader.setLocation(Main.class.getResource("mainView/mainView.fxml"));
         GridPane mainLayout = loader.load();
         stage.getScene().setRoot(mainLayout);
+
+
     }
 
     public static void loadSavedImages() throws IOException {
