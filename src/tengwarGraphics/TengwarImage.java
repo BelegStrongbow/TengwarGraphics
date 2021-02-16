@@ -2,12 +2,9 @@ package tengwarGraphics;
 
 
 import javafx.scene.paint.Color;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class TengwarImage {
     public Color background;
@@ -16,21 +13,48 @@ public class TengwarImage {
     public TengwarText tengwarText;
     public List<Action> actions;
     public List<FilterEnum> filters = new ArrayList<>();
-    public List<Integer> filtersIndices = new ArrayList<>();
+    public boolean textOnTopOfFilters;
+    private String name, date, rating="n/a";
 
-    public TengwarImage(Color background, TengwarText tengwarText, List<Action> actions, String backImageLocation, int typeOfBackground, List<FilterEnum> filters, List<Integer> filtersIndices){
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+    public TengwarImage(){
+    }
+
+    public TengwarImage(Color background, TengwarText tengwarText, List<Action> actions, String backImageLocation, int typeOfBackground, List<FilterEnum> filters, boolean textOnTopOfFilters){
         this.background = background;
         this.tengwarText = tengwarText;
         this.actions = deepCopyArray(actions);
         this.backImageLocation=backImageLocation;
         this.typeOfBackground=typeOfBackground;
         this.filters = deepCopyArray(filters);
-        this.filtersIndices = deepCopyArray(filtersIndices);
+        this.textOnTopOfFilters =textOnTopOfFilters;
     }
 
     public TengwarImage(TengwarImage imageToCopy){
 
-        this(imageToCopy.background, new TengwarText(imageToCopy.tengwarText), imageToCopy.actions, imageToCopy.backImageLocation, imageToCopy.typeOfBackground, imageToCopy.filters, imageToCopy.filtersIndices);
+        this(imageToCopy.background, new TengwarText(imageToCopy.tengwarText), imageToCopy.actions, imageToCopy.backImageLocation, imageToCopy.typeOfBackground, imageToCopy.filters, imageToCopy.textOnTopOfFilters);
     }
 
     List deepCopyArray(List list){

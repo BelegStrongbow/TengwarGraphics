@@ -2,6 +2,7 @@ package tengwarGraphics.mainView;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.VPos;
@@ -21,9 +22,14 @@ import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import tengwarGraphics.*;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 
@@ -40,6 +46,9 @@ public class MainController implements Initializable {
 
     @FXML
     Canvas canvas;
+
+    @FXML
+    CheckBox textplacing;
 
     @FXML
     ColorPicker fontcolor, backcolor;
@@ -70,15 +79,11 @@ public class MainController implements Initializable {
         GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
         graphicsContext.clearRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
         drawBackground(graphicsContext);
-        drawText(graphicsContext);
+        if (currentTengwarImage.textOnTopOfFilters==false) drawText(graphicsContext);
         for (int i = 0; i < currentTengwarImage.filters.size(); i++) {
-            System.out.print(currentTengwarImage.filters.get(i).toString()+" ");
             applyFilter(graphicsContext, currentTengwarImage.filters.get(i));
         }
-        System.out.println();
-        for (int i = 0; i < currentTengwarImage.actions.size(); i++) {
-            System.out.print(currentTengwarImage.actions.get(i).toString()+" ");
-        }
+        if (currentTengwarImage.textOnTopOfFilters==true) drawText(graphicsContext);
 
 /*        graphicsContext.setFont(currentTengwarImage.tengwarText.getFont());
         graphicsContext.setTextAlign(TextAlignment.CENTER);
@@ -163,7 +168,6 @@ public class MainController implements Initializable {
     void addFilter() throws IOException {
         TengwarImage tengwImg = new TengwarImage(currentTengwarImage);
         //tengwImg.filters.add(new Filter(currentTengwarImage.actions.size(), filterComboBox.getValue(), 100, kernels.get(filterComboBox.getValue())));
-        tengwImg.filtersIndices.add(tengwImg.actions.size());
         tengwImg.actions.add(FILTER);
         tengwImg.filters.add(filterComboBox.getValue());
         imageManager.addImage(tengwImg);
@@ -254,7 +258,7 @@ public class MainController implements Initializable {
     WritableImage calculateExtrapolatedSnapshot(GraphicsContext graphicsContext) {
         SnapshotParameters snapshotParameters = new SnapshotParameters();
         snapshotParameters.setFill(Color.TRANSPARENT);
-        Image snapshot = graphicsContext.getCanvas().snapshot(null, null);
+        Image snapshot = graphicsContext.getCanvas().snapshot(snapshotParameters, null);
         WritableImage extrapolatedSnapshot = new WritableImage((int) snapshot.getWidth()+2, (int) snapshot.getHeight()+2);
 /*        extrapolatedSnapshot.getPixelWriter().setPixels(1, 1, (int) snapshot.getWidth(), (int) snapshot.getHeight(), snapshot.getPixelReader(), 0, 0);
         for (int i = 0; i < extrapolatedSnapshot.getHeight(); i++) {
@@ -266,16 +270,21 @@ public class MainController implements Initializable {
             extrapolatedSnapshot.getPixelWriter().setColor(i, (int) extrapolatedSnapshot.getHeight()-1, extrapolatedSnapshot.getPixelReader().getColor(i, (int) extrapolatedSnapshot.getHeight()-2));
         }*/
         PixelWriter pixelWriter = extrapolatedSnapshot.getPixelWriter();
+        PixelReader pixelReader = extrapolatedSnapshot.getPixelReader();
         pixelWriter.setPixels(1, 1, (int) snapshot.getWidth(), (int) snapshot.getHeight(), snapshot.getPixelReader(), 0, 0);
-        for (int i = 0; i < extrapolatedSnapshot.getHeight(); i++) {
+        for (int i = 1; i < extrapolatedSnapshot.getHeight()-1; i++) {
 /*            extrapolatedSnapshot.getPixelWriter().setColor(0, i, extrapolatedSnapshot.getPixelReader().getColor(1, i));
             extrapolatedSnapshot.getPixelWriter().setColor((int) extrapolatedSnapshot.getWidth()-1, i, extrapolatedSnapshot.getPixelReader().getColor((int) extrapolatedSnapshot.getWidth()-2, i));*/
-            pixelWriter.setColor(0, i, new Color(0, 0, 0, 0.0));
-            pixelWriter.setColor((int) extrapolatedSnapshot.getWidth()-1, i, new Color(0, 0, 0, 0.0));
+            /*pixelWriter.setColor(0, i, new Color(0, 0, 0, 0.0));
+            pixelWriter.setColor((int) extrapolatedSnapshot.getWidth()-1, i, new Color(0, 0, 0, 0.0));*/
+            pixelWriter.setColor(0, i, pixelReader.getColor(1, i));
+            pixelWriter.setColor((int) extrapolatedSnapshot.getWidth()-1, i, pixelReader.getColor((int) extrapolatedSnapshot.getWidth()-2, i));
         }
         for (int i = 0; i < extrapolatedSnapshot.getWidth(); i++) {
-            extrapolatedSnapshot.getPixelWriter().setColor(i, 0, new Color(0, 0, 0, 0.0));
-            extrapolatedSnapshot.getPixelWriter().setColor(i, (int) extrapolatedSnapshot.getHeight()-1, new Color(0, 0, 0, 0.0));
+            /*extrapolatedSnapshot.getPixelWriter().setColor(i, 0, new Color(0, 0, 0, 0.0));
+            extrapolatedSnapshot.getPixelWriter().setColor(i, (int) extrapolatedSnapshot.getHeight()-1, new Color(0, 0, 0, 0.0));*/
+            pixelWriter.setColor(i, 0, pixelReader.getColor(i, 1));
+            pixelWriter.setColor(i, (int) extrapolatedSnapshot.getHeight()-1, pixelReader.getColor(i, (int) extrapolatedSnapshot.getHeight()-2));
         }
         return extrapolatedSnapshot;
     }
@@ -374,10 +383,55 @@ public class MainController implements Initializable {
         }
     }
 
+    @FXML
+    void exportAsImage() throws IOException{
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG","*.png"));
+        fileChooser.setTitle("Export image");
+
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file!=null){
+            try{
+                WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
+                SnapshotParameters snapshotParameters = new SnapshotParameters();
+                snapshotParameters.setFill(Color.TRANSPARENT);
+                canvas.snapshot(snapshotParameters, writableImage);
+                RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+                ImageIO.write(renderedImage, "png", file);
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @FXML
+    void changeTextPlacing() throws IOException{
+        TengwarImage tengwImg = new TengwarImage(currentTengwarImage);
+        tengwImg.textOnTopOfFilters = !tengwImg.textOnTopOfFilters;
+        imageManager.addImage(tengwImg);
+        drawImage();
+    }
+
+    @FXML
+    void saveImageInDatabase() throws SQLException {
+        TextInputDialog textInputDialog = new TextInputDialog();
+        textInputDialog.setTitle("Save an image");
+        textInputDialog.setContentText("Enter the name of the design.");
+        textInputDialog.showAndWait();
+        if (!textInputDialog.getEditor().getText().isEmpty() && textInputDialog.getEditor().getText()!=""){
+            DatabaseController.saveImageInDatabase(currentTengwarImage, textInputDialog.getEditor().getText());
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setContentText("Image saved.");
+            alert.setTitle("Save an image");
+            alert.show();
+        }
+    }
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        fontcolor.setValue(Color.BLACK);
+
         List<Integer> fontsizes = new ArrayList<>();
         fontsizes.add(72);
         fontsizes.add(86);
@@ -392,8 +446,6 @@ public class MainController implements Initializable {
 
         ObservableList<Integer> fontSizesObservable = FXCollections.observableList(fontsizes);
         fontsize.getItems().addAll(fontSizesObservable);
-
-        fontsize.setValue(114);
 
 
         kernels.put(SHARPEN, new Double[][]{
@@ -432,12 +484,34 @@ public class MainController implements Initializable {
         ObservableList<TengwarFont> tengwarFonts = FXCollections.observableList(Arrays.asList(TengwarFont.values()));
         fonttypes.getItems().addAll(tengwarFonts);
 
-        fonttypes.setValue(TengwarFont.ANNATAR);
-
         ObservableList<FilterEnum> filtersObservable = FXCollections.observableList(Arrays.asList(FilterEnum.values()));
         filterComboBox.getItems().addAll(filtersObservable);
 
-        redo.setDisable(true);
         undo.setDisable(true);
+        redo.setDisable(true);
+
+
+ /*       if (imageflag<-1){
+            fonttypes.setValue(TengwarFont.ANNATAR);
+            fontsize.setValue(114);
+            fontcolor.setValue(Color.BLACK);
+        }*/
+
+        //if (imageflag==-1){
+            userstext.setText(currentTengwarImage.tengwarText.getTextOriginal());
+            fonttypes.setValue(currentTengwarImage.tengwarText.getFontEnum());
+            fontsize.setValue(currentTengwarImage.tengwarText.getSize());
+            fontcolor.setValue(currentTengwarImage.tengwarText.getColor());
+            backcolor.setValue(currentTengwarImage.background);
+            if (currentTengwarImage.filters.size()>0) filterComboBox.setValue(currentTengwarImage.filters.get(currentTengwarImage.filters.size()-1));
+            textplacing.setSelected(currentTengwarImage.textOnTopOfFilters);
+            try {
+                drawImage();
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
+     //   }
+
+
     }
 }

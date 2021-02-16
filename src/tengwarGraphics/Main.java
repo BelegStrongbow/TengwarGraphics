@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class Main extends Application {
 
-
+    public static int imageflag = -2;
     static Stage stage;
 
     @Override
