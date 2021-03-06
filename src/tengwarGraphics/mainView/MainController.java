@@ -33,7 +33,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 
-import static tengwarGraphics.Action.*;
 import static tengwarGraphics.FilterEnum.*;
 import static tengwarGraphics.ImageManager.*;
 import static tengwarGraphics.Main.*;
@@ -66,7 +65,7 @@ public class MainController implements Initializable {
     Button undo, redo;
 
 
-    HashMap<FilterEnum, Double[][]> kernels = new HashMap<FilterEnum, Double[][]>();
+    HashMap<FilterEnum, Double[][]> kernels = new HashMap<>();
 
     @FXML
     private void goSavedImages() throws IOException {
@@ -124,7 +123,6 @@ public class MainController implements Initializable {
             TengwarImage tengwImg = new TengwarImage(currentTengwarImage);
             tengwImg.background = backcolor.getValue();
             tengwImg.typeOfBackground = 0;
-            tengwImg.actions.add(BACKGROUND);
             imageManager.addImage(tengwImg);
             drawImage();
         }
@@ -145,7 +143,6 @@ public class MainController implements Initializable {
                 TengwarImage tengwImg = new TengwarImage(currentTengwarImage);
                 tengwImg.backImageLocation = selectedImage.toURI().toString();
                 tengwImg.typeOfBackground = 1;
-                tengwImg.actions.add(BACKGROUND);
                 imageManager.addImage(tengwImg);
                 drawImage();
             }
@@ -153,7 +150,7 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    void drawBackground(GraphicsContext graphicsContext) throws IOException {
+    void drawBackground(GraphicsContext graphicsContext) {
         if (currentTengwarImage.typeOfBackground==0){
             graphicsContext.setFill(currentTengwarImage.background);
             graphicsContext.fillRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
@@ -168,20 +165,12 @@ public class MainController implements Initializable {
     void addFilter() throws IOException {
         TengwarImage tengwImg = new TengwarImage(currentTengwarImage);
         //tengwImg.filters.add(new Filter(currentTengwarImage.actions.size(), filterComboBox.getValue(), 100, kernels.get(filterComboBox.getValue())));
-        tengwImg.actions.add(FILTER);
         tengwImg.filters.add(filterComboBox.getValue());
         imageManager.addImage(tengwImg);
         calculateExtrapolatedSnapshot(canvas.getGraphicsContext2D());
         drawImage();
     }
 
-/*    void addFilter(Filter f) throws IOException {
-        TengwarImage tengwImg = new TengwarImage(currentTengwarImage);
-        tengwImg.filters.add(f);
-        tengwImg.actions.add(FILTER);
-        imageManager.addImage(tengwImg);
-        drawImage();
-    }*/
 
     @FXML
     void applyFilter(GraphicsContext graphicsContext, FilterEnum filterEnum) throws IOException {
@@ -312,10 +301,8 @@ public class MainController implements Initializable {
     @FXML
     void changeText() throws IOException {
         if(!userstext.getText().equals(currentTengwarImage.tengwarText.getTextOriginal())) {
-            //TengwarImage tengwImg = imageManager.cloneImage(currentTengwarImage);
             TengwarImage tengwImg = new TengwarImage(currentTengwarImage);
             tengwImg.tengwarText.setTextOriginal(userstext.getText());
-            tengwImg.actions.add(TEXT);
             imageManager.addImage(tengwImg);
             drawImage();
         }
@@ -324,10 +311,8 @@ public class MainController implements Initializable {
     @FXML
     void changeFontColor() throws IOException {
         if (!currentTengwarImage.tengwarText.getColor().equals(fontcolor.getValue())){
-            //TengwarImage tengwImg = imageManager.cloneImage(currentTengwarImage);
             TengwarImage tengwImg = new TengwarImage(currentTengwarImage);
             tengwImg.tengwarText.setColor(fontcolor.getValue());
-            tengwImg.actions.add(TEXTCOLOR);
             imageManager.addImage(tengwImg);
             drawImage();
         }
@@ -340,9 +325,6 @@ public class MainController implements Initializable {
         alert.getButtonTypes().remove(ButtonType.CANCEL);
         int size = currentTengwarImage.tengwarText.getSize();
         int newsize=-1;
-/*        if (fontsize.getEditor().getText().matches("[0-9]+"))
-        newsize = Integer.parseInt(fontsize.getEditor().getText());
-        else alert.show();*/
         try {
             newsize = Integer.parseInt(fontsize.getEditor().getText());
         } catch(NumberFormatException e) {
@@ -352,7 +334,6 @@ public class MainController implements Initializable {
             if(newsize!=size){
                 TengwarImage tengwImg = new TengwarImage(currentTengwarImage);
                 tengwImg.tengwarText.setSize(newsize);
-                tengwImg.actions.add(TEXTSIZE);
                 imageManager.addImage(tengwImg);
                 drawImage();
             }
@@ -377,14 +358,13 @@ public class MainController implements Initializable {
         if (!currentTengwarImage.tengwarText.getFontEnum().equals(fonttypes.getValue())){
             TengwarImage tengwImg = new TengwarImage(currentTengwarImage);
             tengwImg.tengwarText.setFontEnum(fonttypes.getValue());
-            tengwImg.actions.add(FONT);
             imageManager.addImage(tengwImg);
             drawImage();
         }
     }
 
     @FXML
-    void exportAsImage() throws IOException{
+    void exportAsImage() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG","*.png"));
         fileChooser.setTitle("Export image");
@@ -399,6 +379,10 @@ public class MainController implements Initializable {
                 canvas.snapshot(snapshotParameters, writableImage);
                 RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
                 ImageIO.write(renderedImage, "png", file);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setContentText("Image exported.");
+                alert.setTitle("Export image");
+                alert.show();
             } catch (IOException e){
                 e.printStackTrace();
             }

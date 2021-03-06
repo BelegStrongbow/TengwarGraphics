@@ -17,7 +17,7 @@ public class ImageManager {
 
     public static ImageManager imageManager = new ImageManager();
     private ImageManager(){
-        currentTengwarImage = new TengwarImage(Color.WHITE, new TengwarText("", 114, 710, 335, Color.BLACK, ANNATAR), new ArrayList<>(), "", -1, new ArrayList<>(), false);
+        currentTengwarImage = new TengwarImage(Color.WHITE, new TengwarText("", 114, 710, 335, Color.BLACK, ANNATAR), "", -1, new ArrayList<>(), false);
         /*currentTengwarImage.tengwarText = new TengwarText(710, 335);
         currentTengwarImage.tengwarText.setFontEnum(ANNATAR);
         currentTengwarImage.tengwarText.setColor(Color.BLACK);

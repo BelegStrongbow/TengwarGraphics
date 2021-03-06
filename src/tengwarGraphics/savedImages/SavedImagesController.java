@@ -4,6 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -20,6 +22,7 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 
 import static tengwarGraphics.DatabaseController.getImagesFromDatabase;
+import static tengwarGraphics.DatabaseController.removeFromDatabase;
 import static tengwarGraphics.ImageManager.*;
 
 public class SavedImagesController implements Initializable {
@@ -31,7 +34,7 @@ public class SavedImagesController implements Initializable {
     TableView<TengwarImage> imagetable;
 
     @FXML
-    TableColumn namecol, datecol, ratingcol;
+    TableColumn namecol, datecol;
 
     @FXML
     private void goMain() throws IOException {
@@ -49,8 +52,31 @@ public class SavedImagesController implements Initializable {
         }
     }
 
+    @FXML
+    private void removeImage(){
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete saved design");
+        alert.setContentText("Are you sure that you want to delete this design?");
+        alert.showAndWait().ifPresent(buttonType -> {
+            if (buttonType.equals(ButtonType.OK)){
+                try {
+                    int index = imagetable.getSelectionModel().getSelectedIndex();
+                    removeFromDatabase(imagetable.getItems().get(index).getDate());
+                    loadImagesToTable();
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        loadImagesToTable();
+    }
+
+    public void loadImagesToTable(){
         ArrayList<TengwarImage> tengwarImages = new ArrayList<>();
         try {
             tengwarImages = getImagesFromDatabase();
@@ -59,10 +85,8 @@ public class SavedImagesController implements Initializable {
         }
         namecol.setCellValueFactory(new PropertyValueFactory("name"));
         datecol.setCellValueFactory(new PropertyValueFactory("date"));
-        ratingcol.setCellValueFactory(new PropertyValueFactory("rating"));
         ObservableList<TengwarImage> data = FXCollections.observableArrayList(tengwarImages);
         imagetable.setItems(data);
-
     }
 
 }

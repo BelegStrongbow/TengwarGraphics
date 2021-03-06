@@ -25,7 +25,6 @@
                      <columns>
                         <TableColumn fx:id="namecol" prefWidth="75.0" text="Name" />
                         <TableColumn fx:id="datecol" prefWidth="75.0" text="Date" />
-                        <TableColumn fx:id="ratingcol" prefWidth="75.0" text="Rating" />
                      </columns>
                   </TableView>
                </content>
@@ -55,13 +54,21 @@
                      </font>
                   </Button>
                </children></AnchorPane>
-            <Button mnemonicParsing="false" onAction="#loadImage" prefHeight="70.0" prefWidth="300.0" style="-fx-background-color: #526f3f;" text="Open">
+            <Button mnemonicParsing="false" onAction="#removeImage" prefHeight="70.0" prefWidth="300.0" style="-fx-background-color: #526f3f;" text="Delete">
                <HBox.margin>
-                  <Insets left="1220.0" top="40.0" />
+                  <Insets left="820.0" top="40.0" />
                </HBox.margin>
                <font>
                   <Font size="28.0" />
                </font>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#loadImage" prefHeight="70.0" prefWidth="300.0" style="-fx-background-color: #526f3f;" text="Open">
+               <font>
+                  <Font size="28.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="100.0" top="40.0" />
+               </HBox.margin>
             </Button>
              
          </children></HBox>

@@ -11,10 +11,9 @@ public class TengwarImage {
     public String backImageLocation;
     public int typeOfBackground = -1;
     public TengwarText tengwarText;
-    public List<Action> actions;
     public List<FilterEnum> filters = new ArrayList<>();
     public boolean textOnTopOfFilters;
-    private String name, date, rating="n/a";
+    private String name, date;
 
     public String getName() {
         return name;
@@ -32,20 +31,10 @@ public class TengwarImage {
         this.date = date;
     }
 
-    public String getRating() {
-        return rating;
-    }
 
-    public void setRating(String rating) {
-        this.rating = rating;
-    }
-    public TengwarImage(){
-    }
-
-    public TengwarImage(Color background, TengwarText tengwarText, List<Action> actions, String backImageLocation, int typeOfBackground, List<FilterEnum> filters, boolean textOnTopOfFilters){
+    public TengwarImage(Color background, TengwarText tengwarText, String backImageLocation, int typeOfBackground, List<FilterEnum> filters, boolean textOnTopOfFilters){
         this.background = background;
         this.tengwarText = tengwarText;
-        this.actions = deepCopyArray(actions);
         this.backImageLocation=backImageLocation;
         this.typeOfBackground=typeOfBackground;
         this.filters = deepCopyArray(filters);
@@ -54,7 +43,7 @@ public class TengwarImage {
 
     public TengwarImage(TengwarImage imageToCopy){
 
-        this(imageToCopy.background, new TengwarText(imageToCopy.tengwarText), imageToCopy.actions, imageToCopy.backImageLocation, imageToCopy.typeOfBackground, imageToCopy.filters, imageToCopy.textOnTopOfFilters);
+        this(imageToCopy.background, new TengwarText(imageToCopy.tengwarText), imageToCopy.backImageLocation, imageToCopy.typeOfBackground, imageToCopy.filters, imageToCopy.textOnTopOfFilters);
     }
 
     List deepCopyArray(List list){

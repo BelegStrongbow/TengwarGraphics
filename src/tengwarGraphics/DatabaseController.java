@@ -1,6 +1,7 @@
 package tengwarGraphics;
 
 import javafx.scene.paint.Color;
+import tengwarGraphics.savedImages.SavedImagesController;
 
 import java.awt.*;
 import java.sql.*;
@@ -46,17 +47,22 @@ public class DatabaseController {
                             col = textColor.split(";");
                             Color textCol = new Color(Float.parseFloat(col[0]), Float.parseFloat(col[1]), Float.parseFloat(col[2]), 1);
 
-                            String[] filterArray = filters.split(";");
                             ArrayList<FilterEnum> filterArrayList = new ArrayList<>();
-                            for (int i = 0; i < filterArray.length; i++) {
-                                filterArrayList.add(FilterEnum.valueOf(filterArray[i]));
+
+                            if (!filters.isEmpty()){
+                                String[] filterArray = filters.split(";");
+
+
+                                for (int i = 0; i < filterArray.length; i++) {
+                                    filterArrayList.add(FilterEnum.valueOf(filterArray[i]));
+                                }
                             }
 
                             String[] namedate = new String[2];
                             namedate[0] = name;
                             namedate[1] = date;
 
-                            tengwarImages.add(new TengwarImage(backgroundCol, new TengwarText(textOriginal, size, 710, 335, textCol, TengwarFont.valueOf(fontEnum)), new ArrayList<Action>(), backroundImageLoc, typeOfBackground, filterArrayList, textOnTop));
+                            tengwarImages.add(new TengwarImage(backgroundCol, new TengwarText(textOriginal, size, 710, 335, textCol, TengwarFont.valueOf(fontEnum)), backroundImageLoc, typeOfBackground, filterArrayList, textOnTop));
                             tengwarImages.get(tengwarImages.size()-1).setName(name);
                             tengwarImages.get(tengwarImages.size()-1).setDate(date);
 
@@ -86,7 +92,19 @@ public class DatabaseController {
         PreparedStatement preparedStatement = connection.prepareStatement(insertSQL);
 
         LocalDateTime now = LocalDateTime.now();
-        String date = now.getYear()+"-"+now.getMonthValue()+"-"+now.getDayOfMonth()+" "+now.getHour()+":"+now.getMinute()+":"+now.getSecond();
+
+        int mv = now.getMonthValue();
+        int dm = now.getDayOfMonth();
+        int h = now.getHour();
+        int min = now.getMinute();
+        int sec = now.getSecond();
+        String month = Integer.toString(mv), day = Integer.toString(dm), hour = Integer.toString(h), minute = Integer.toString(min), second = Integer.toString(sec);
+        if (mv/10==0) month = "0"+mv;
+        if (dm/10==0) day = "0"+dm;
+        if (h/10==0) hour = "0"+h;
+        if (min/10==0) minute = "0"+min;
+        if (sec/10==0) second = "0"+sec;
+        String date = now.getYear()+"-"+month+"-"+day+" "+hour+":"+minute+":"+second;
         String backgroundColor = tengwarImage.background.getRed() + ";" + tengwarImage.background.getGreen() + ";" + tengwarImage.background.getBlue();
         String filters="";
         for (int i = 0; i < tengwarImage.filters.size(); i++) {
@@ -109,6 +127,29 @@ public class DatabaseController {
                     preparedStatement.setInt(9, tengwarImage.tengwarText.getSize());
                     preparedStatement.setString(10, textColor);
                     preparedStatement.setString(11, tengwarImage.tengwarText.getFontEnum().toString());
+                    preparedStatement.executeUpdate();
+                } finally {
+                    preparedStatement.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void removeFromDatabase(String date) throws SQLException{
+        Connection connection = getConnection(CONN);
+
+        String removeSQL = "DELETE FROM savedImages WHERE date = ?";
+
+        PreparedStatement preparedStatement = connection.prepareStatement(removeSQL);
+
+        try {
+            try {
+                try {
+                    preparedStatement.setString(1, date);
                     preparedStatement.executeUpdate();
                 } finally {
                     preparedStatement.close();

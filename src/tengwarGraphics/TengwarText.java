@@ -33,21 +33,6 @@ public class TengwarText extends Text {
         this(textToCopy.textOriginal, textToCopy.size, textToCopy.getX(), textToCopy.getY(), textToCopy.color, textToCopy.fontEnum);
     }
 
-/*    public TengwarText(String text, int size, Color color, TengwarFont font, int x, int y) {
-        super("");
-        this.fontEnum = font;
-        fetchFont(fontEnum);
-        this.textOriginal = text;
-        this.setText(transcribeParmaite(textOriginal));
-        fetchFont(font);
-        this.setFont(this.font);
-
-        this.color = color;
-        this.x=x;
-        this.y=y;
-
-    }*/
-
 
     public String getTextOriginal() {
         return textOriginal;
