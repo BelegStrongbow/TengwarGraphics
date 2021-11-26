@@ -3,8 +3,10 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -31,22 +33,22 @@
                   <Insets top="55.0" />
                </VBox.margin>
                <children>
-                  <TextField prefHeight="70.0" prefWidth="960.0" promptText="Text in English..." style="-fx-background-color: ffffff;">
+                  <TextField fx:id="userstext" prefHeight="70.0" prefWidth="990.0" promptText="Text in English..." style="-fx-background-color: ffffff;">
                      <font>
                         <Font name="Centaur" size="32.0" />
                      </font></TextField>
-                  <ComboBox prefHeight="70.0" prefWidth="250.0" promptText="Font" style="-fx-background-color: ffffff;">
+                  <ComboBox fx:id="fonttypes" onAction="#changeFontType" prefHeight="70.0" prefWidth="250.0" promptText="Font" style="-fx-background-color: ffffff;">
                      <HBox.margin>
-                        <Insets left="150.0" />
+                        <Insets left="120.0" />
                      </HBox.margin>
                   </ComboBox>
                </children>
             </HBox>
             <HBox prefHeight="70.0">
                <children>
-                  <Button mnemonicParsing="false" prefHeight="70.0" prefWidth="150.0" style="-fx-background-color: #526f3f;" text="Accept">
+                  <Button mnemonicParsing="false" onAction="#changeText" prefHeight="70.0" prefWidth="150.0" style="-fx-background-color: #526f3f;" text="Accept">
                      <HBox.margin>
-                        <Insets left="810.0" />
+                        <Insets left="840.0" />
                      </HBox.margin>
                      <font>
                         <Font size="28.0" />
@@ -59,22 +61,40 @@
                   <Insets top="50.0" />
                </VBox.margin>
                <children>
-                  <ColorPicker prefHeight="70.0" prefWidth="250.0" promptText="Font color" style="-fx-background-color: ffffff;" />
-                  <ComboBox prefHeight="70.0" prefWidth="250.0" promptText="Font size" style="-fx-background-color: ffffff;">
+                  <ColorPicker fx:id="fontcolor" editable="true" onAction="#changeFontColor" prefHeight="70.0" prefWidth="250.0" promptText="Font color" style="-fx-background-color: ffffff;" />
+                  <ComboBox fx:id="fontsize" editable="true" onAction="#changeFontSize" prefHeight="70.0" prefWidth="250.0" promptText="Font size" style="-fx-background-color: ffffff;">
                      <HBox.margin>
                         <Insets left="120.0" />
                      </HBox.margin>
                   </ComboBox>
-                  <ComboBox prefHeight="70.0" prefWidth="250.0" promptText="Add background" style="-fx-background-color: ffffff;">
+                  <ComboBox fx:id="filterComboBox" onAction="#addFilter" prefHeight="70.0" prefWidth="250.0" promptText="Add filters" style="-fx-background-color: ffffff;">
                      <HBox.margin>
                         <Insets left="120.0" />
                      </HBox.margin>
                   </ComboBox>
-                  <ComboBox prefHeight="70.0" prefWidth="250.0" promptText="Add filters" style="-fx-background-color: ffffff;">
+                  <Label maxHeight="70.0" minHeight="70.0" prefHeight="70.0" text="Background:">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
                      <HBox.margin>
                         <Insets left="120.0" />
                      </HBox.margin>
-                  </ComboBox>
+                  </Label>
+                  <ColorPicker fx:id="backcolor" editable="true" maxWidth="70.0" minHeight="70.0" minWidth="70.0" onAction="#changeBackgroundColor" prefWidth="70.0" style="-fx-background-color: ffffff;">
+                     <HBox.margin>
+                        <Insets left="3.0" />
+                     </HBox.margin>
+                  </ColorPicker>
+                  <Label maxHeight="70.0" minHeight="70.0" prefHeight="70.0" text="or">
+                     <padding>
+                        <Insets left="4.0" />
+                     </padding>
+                  </Label>
+                  <Button maxHeight="70.0" maxWidth="70.0" minHeight="70.0" minWidth="70.0" mnemonicParsing="false" onAction="#changeBackgroundImage" prefHeight="70.0" prefWidth="70.0" style="-fx-background-color: #233b25;" text="Choose image" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                     <HBox.margin>
+                        <Insets left="4.0" />
+                     </HBox.margin>
+                  </Button>
                </children>
             </HBox>
             <AnchorPane prefHeight="690.0" prefWidth="1440.0" style="-fx-background-color: ffffff;">
@@ -86,7 +106,7 @@
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#526f3f" height="690.0" stroke="#526f3f" strokeType="INSIDE" strokeWidth="0.0" width="10.0" />
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#526f3f" height="10.0" layoutY="680.0" stroke="#526f3f" strokeType="INSIDE" strokeWidth="0.0" width="1440.0" />
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#526f3f" height="690.0" layoutX="1430.0" stroke="#526f3f" strokeType="INSIDE" strokeWidth="0.0" width="10.0" />
-                  <Canvas height="670.0" layoutX="10.0" layoutY="10.0" width="1420.0" />
+                  <Canvas fx:id="canvas" height="670.0" layoutX="10.0" layoutY="10.0" width="1420.0" />
                </children>
             </AnchorPane>
          </children>
@@ -103,7 +123,19 @@
                   </Button>
                </children>
             </AnchorPane>
-            <Button mnemonicParsing="false" prefHeight="70.0" prefWidth="300.0" style="-fx-background-color: #526f3f;" text="Save">
+            <HBox maxHeight="70.0" minHeight="70.0" prefHeight="70.0">
+               <VBox.margin>
+                  <Insets top="45.0" />
+               </VBox.margin>
+               <children>
+                  <CheckBox fx:id="textplacing" minHeight="70.0" mnemonicParsing="false" onAction="#changeTextPlacing" text="Place text on top of the filters">
+                     <HBox.margin>
+                        <Insets left="40.0" />
+                     </HBox.margin>
+                  </CheckBox>
+               </children>
+            </HBox>
+            <Button mnemonicParsing="false" onAction="#saveImageInDatabase" prefHeight="70.0" prefWidth="300.0" style="-fx-background-color: #526f3f;" text="Save">
                <font>
                   <Font size="28.0" />
                </font>
@@ -111,7 +143,7 @@
                   <Insets left="90.0" top="190.0" />
                </VBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="70.0" prefWidth="300.0" style="-fx-background-color: #526f3f;" text="Export as an image">
+            <Button mnemonicParsing="false" onAction="#exportAsImage" prefHeight="70.0" prefWidth="300.0" style="-fx-background-color: #526f3f;" text="Export as an image">
                <font>
                   <Font size="28.0" />
                </font>
@@ -121,10 +153,10 @@
             </Button>
             <HBox prefHeight="100.0" prefWidth="480.0">
                <VBox.margin>
-                  <Insets top="290.0" />
+                  <Insets top="175.0" />
                </VBox.margin>
                <children>
-                  <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="100.0" style="-fx-background-color: #233b25;" text="UNDO" textFill="WHITE">
+                  <Button fx:id="undo" mnemonicParsing="false" onAction="#undo" prefHeight="100.0" prefWidth="100.0" style="-fx-background-color: #233b25;" text="UNDO" textFill="WHITE">
                      <HBox.margin>
                         <Insets left="135.0" />
                      </HBox.margin>
@@ -132,7 +164,7 @@
                         <Font size="21.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="100.0" prefWidth="100.0" style="-fx-background-color: #233b25;" text="REDO" textFill="WHITE">
+                  <Button fx:id="redo" mnemonicParsing="false" onAction="#redo" prefHeight="100.0" prefWidth="100.0" style="-fx-background-color: #233b25;" text="REDO" textFill="WHITE">
                      <font>
                         <Font size="21.0" />
                      </font>

@@ -1,9 +1,12 @@
 package tengwarGraphics;
 
 import javafx.application.Application;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -12,6 +15,7 @@ import java.io.IOException;
 
 public class Main extends Application {
 
+    public static int imageflag = -2;
     static Stage stage;
 
     @Override
@@ -21,7 +25,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource("mainView/mainView.fxml"));
         GridPane mainLayout = loader.load();
-        Scene scene = new Scene(mainLayout, 1920, 1080);
+        Scene scene = new Scene(mainLayout, 1920, 1045);
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();
@@ -31,16 +35,16 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource("mainView/mainView.fxml"));
         GridPane mainLayout = loader.load();
-        Scene scene = new Scene(mainLayout, 1920, 1080);
-        stage.setScene(scene);
+        stage.getScene().setRoot(mainLayout);
+
+
     }
 
     public static void loadSavedImages() throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource("savedImages/savedImages.fxml"));
         VBox savedImagesLayout = loader.load();
-        Scene scene = new Scene(savedImagesLayout, 1920, 1080);
-        stage.setScene(scene);
+        stage.getScene().setRoot(savedImagesLayout);
     }
 
 
